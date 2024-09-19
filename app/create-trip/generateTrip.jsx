@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, SafeAreaView, Alert, View } from "react-native";
 import LottieView from "lottie-react-native";
-import { chatSession } from "../../configs/AiModel";
 import { auth, db } from "../../configs/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore"; // Import Firestore functions
 import { AI_PROMPT } from "../../constants/Options";
 import { CreateTripContext } from "../../context/CreateTripContext";
 import { router } from "expo-router";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const LoadingAnimation = () => {
   const { tripData } = useContext(CreateTripContext);
@@ -63,8 +63,15 @@ const LoadingAnimation = () => {
     console.log("Generated AI Prompt:", FINAL_AI_PROMPT);
 
     try {
-      const result = await chatSession.sendMessage(FINAL_AI_PROMPT);
-      const textResponse = await result.response.text(); // Await the text response
+      const apiKey = process.env.EXPO_PUBLIC_GOOGLE_GEMINI_API_KEY; // Replace with your actual API key
+      const genAI = new GoogleGenerativeAI({ apiKey });
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
+      const prompt = "Write a poem about a cat";
+      const result = await model.generateContent(FINAL_AI_PROMPT);
+      const textResponse = result.response.text(); // Await the text response
 
       try {
         const jsonResponse = JSON.parse(textResponse); // Parse the JSON response

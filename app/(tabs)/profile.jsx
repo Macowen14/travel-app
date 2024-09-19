@@ -20,7 +20,9 @@ import { auth } from "../../configs/firebase";
 
 const Profile = () => {
   const router = useRouter();
-  const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(
+    userData?.avatar || null
+  );
   const { userData, updateUserDetails, setUserData, setTripData } =
     useContext(CreateTripContext);
 
@@ -155,11 +157,7 @@ const Profile = () => {
 
         <View className="items-center mt-4">
           <Image
-            source={
-              selectedAvatar
-                ? { uri: selectedAvatar }
-                : require("../../assets/images/man.png")
-            }
+            source={require("../../assets/images/man.png")}
             style={{ height: 190, width: 190, borderRadius: 96 }}
           />
 

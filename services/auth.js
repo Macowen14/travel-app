@@ -73,13 +73,13 @@ export const signInWithEmail = async (email, password) => {
   }
 };
 
-// Function to handle sign out
-export const handleSignOut = async () => {
-  const { setUserData, setTripData } = useContext(CreateTripContext); // Clear context
-  const router = useRouter();
+// Updated function to handle sign out
+export const handleSignOut = async ({ setUserData, setTripData }) => {
+  const router = useRouter(); // Use the router outside the try-catch block
 
   try {
-    console.log("going to sign out");
+    console.log("Going to sign out...");
+
     // Sign out the user
     await signOut(auth);
     console.log("User signed out successfully");
@@ -89,7 +89,7 @@ export const handleSignOut = async () => {
     setTripData([]); // Clear trip data
 
     // Redirect to the sign-in page
-    router.push("/(auth)/signin");
+    router.replace("/(auth)/signin");
   } catch (error) {
     console.error("Error signing out:", error);
   }

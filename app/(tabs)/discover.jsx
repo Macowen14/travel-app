@@ -12,13 +12,13 @@ import React, { useContext } from "react";
 import dayjs from "dayjs";
 import { place1 } from "../../assets/images/index";
 import { CreateTripContext } from "../../context/CreateTripContext";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 const Discover = () => {
+  const { index } = useLocalSearchParams();
   const { userData } = useContext(CreateTripContext);
   const trips = userData?.trips;
-  console.log("trips", trips);
-  const trip = trips?.[0]?.travelPlan;
+  const trip = trips?.[index ?? 0]?.travelPlan;
 
   if (!trip || !trips) {
     return (

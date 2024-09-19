@@ -71,6 +71,20 @@ const _layout = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          tabBarLabel: "Settings",
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name="application-settings-outline"
+              size={focused ? size * 1.2 : size}
+              color={color}
+              style={{ marginTop: 2 }}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 };
