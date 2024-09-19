@@ -31,14 +31,14 @@ const Signin = () => {
       ToastAndroid.show("Please fill in all fields", ToastAndroid.TOP);
     } else {
       try {
-        setValidating(!validating);
+        setValidating(true); // Set loading state to true
         const user = await signInWithEmail(email, password);
         console.log(user);
         route.navigate("/mytrip");
-        setValidating(false);
+        setValidating(false); // Reset loading state
       } catch (error) {
-        setValidating(false);
-        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+        setValidating(false); // Reset loading state
+        ToastAndroid.show(error.message, ToastAndroid.SHORT); // Show error message
         console.log(error.code, error.message);
       }
     }
@@ -53,13 +53,13 @@ const Signin = () => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
-        setKeyboardVisible(true); // or some other action
+        setKeyboardVisible(true);
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
-        setKeyboardVisible(false); // or some other action
+        setKeyboardVisible(false);
       }
     );
 
@@ -82,7 +82,6 @@ const Signin = () => {
           <View
             className={`mt-10 px-4 ${isKeyboardVisible ? "mb-6" : "mb-16"}`}
           >
-            {/* Sign-in Header */}
             <Text
               className="font-bold text-center"
               style={{ fontFamily: "outfitBold", fontSize: 30 }}
@@ -105,7 +104,6 @@ const Signin = () => {
 
           {validating && <ActivityIndicator size={"large"} />}
 
-          {/* Form Inputs */}
           <View className="space-y-6 px-4">
             <View>
               <Text
@@ -121,6 +119,7 @@ const Signin = () => {
                 style={{ fontFamily: "outfitRegular" }}
                 onChangeText={(text) => setEmail(text)}
                 value={email}
+                editable={!validating} // Disable input while validating
               />
             </View>
 
@@ -138,27 +137,37 @@ const Signin = () => {
                 style={{ fontFamily: "outfitRegular" }}
                 onChangeText={(text) => setPassword(text)}
                 value={password}
+                editable={!validating} // Disable input while validating
               />
             </View>
 
             {/* Sign-In Button */}
             <TouchableOpacity
-              className="bg-blue-600 rounded-lg py-4 mt-10 items-center"
+              className={`bg-blue-600 rounded-lg py-4 mt-10 items-center ${
+                validating ? "opacity-50" : ""
+              }`}
               onPress={handleSignIn}
-              disabled={validating}
+              disabled={validating} // Disable button while validating
             >
-              <Text
-                className="text-white font-bold"
-                style={{ fontFamily: "outfitBold", fontSize: 18 }}
-              >
-                Sign In
-              </Text>
+              {validating ? (
+                <ActivityIndicator color="#ffffff" /> // Show loading spinner
+              ) : (
+                <Text
+                  className="text-white font-bold"
+                  style={{ fontFamily: "outfitBold", fontSize: 18 }}
+                >
+                  Sign In
+                </Text>
+              )}
             </TouchableOpacity>
 
             {/* Google Sign-In Button */}
             <TouchableOpacity
-              className="bg-red-600 rounded-lg py-4 mt-4 items-center"
-              onPress={() => promptAsync()} // Trigger Google Sign-In
+              className={`bg-red-600 rounded-lg py-4 mt-4 items-center ${
+                validating ? "opacity-50" : ""
+              }`}
+              onPress={() => promptAsync()}
+              disabled={validating} // Disable button while validating
             >
               <Text
                 className="text-white font-bold"
@@ -174,6 +183,7 @@ const Signin = () => {
               onPress={() => {
                 route.push("/(auth)/forgotPassword");
               }}
+              disabled={validating} // Disable button while validating
             >
               <Text
                 className="text-blue-600 font-bold"
@@ -184,7 +194,6 @@ const Signin = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Footer */}
           {!isKeyboardVisible && (
             <View className="w-full items-center mb-4 px-4">
               <View className="flex flex-row items-center">
@@ -199,6 +208,7 @@ const Signin = () => {
                   onPress={() => {
                     route.push("/(auth)/signup");
                   }}
+                  disabled={validating} // Disable button while validating
                 >
                   <Text
                     className="text-blue-600 font-bold"

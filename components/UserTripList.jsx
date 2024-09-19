@@ -14,10 +14,10 @@ import { useContext } from "react";
 import { CreateTripContext } from "../context/CreateTripContext";
 
 const UserTripList = () => {
-  const { userData } = useContext(CreateTripContext);
+  const { tripData, userData } = useContext(CreateTripContext);
 
   // Debugging: Console log the entire trip details to inspect the structure
-  console.log("Full trip details:", userData?.travelPlan?.trip_details);
+  console.log("Full trip details:", tripData);
 
   return (
     <ScrollView horizontal={false} scrollEnabled={true} className="space-y-2">
@@ -31,40 +31,43 @@ const UserTripList = () => {
           className="w-full object-contain rounded-md h-[31vh]"
         />
 
-        {/* Trip Details */}
-        <View className="mt-2 flex justify-between flex-row bg-gray-50 shadow-md rounded-md space-x-10 py-3 p-1">
-          <View className="space-y-2">
-            <Text className="font-outfitMedium text-lg">
-              {userData?.travelPlan?.trip_details?.destination ??
-                "Destination not available"}
-            </Text>
-            <Text>
-              Start date:{" "}
-              {dayjs(userData?.travelPlan?.trip_details?.start_date).format(
-                "DD/MM/YYYY"
-              ) ?? "Date not available"}
-            </Text>
+        {userData?.trips?.map((trip, index) => (
+          <View
+            key={index}
+            className="mt-2 flex justify-between flex-row bg-gray-50 shadow-md rounded-md space-x-10 py-3 p-1"
+          >
+            <View className="space-y-2">
+              <Text className="font-outfitMedium text-lg">
+                {trip?.travelPlan?.trip_details?.destination ||
+                  "Unknown Destination"}
+              </Text>
+              <Text>
+                Start date:{" "}
+                {dayjs(trip?.travelPlan?.trip_details?.start_date).format(
+                  "DD/MM/YYYY"
+                )}
+              </Text>
+            </View>
+            <View className="space-y-1">
+              <Text className="text-sm">
+                {trip?.travelPlan?.trip_details?.duration || "N/A"}
+              </Text>
+              <Text className="text-sm">
+                {trip?.travelPlan?.trip_details?.travelers || "N/A"}
+              </Text>
+              <Text className="text-sm">
+                {trip?.travelPlan?.trip_details?.budget || "N/A"}
+              </Text>
+            </View>
           </View>
-          <View className="space-y-1">
-            <Text className="text-sm">
-              {userData?.travelPlan?.trip_details?.duration ??
-                "Duration not available"}
-            </Text>
-            <Text className="text-sm">
-              {userData?.travelPlan?.trip_details?.travelers ??
-                "Travelers info not available"}
-            </Text>
-            <Text className="text-sm">
-              {userData?.travelPlan?.trip_details?.budget ??
-                "Budget not available"}
-            </Text>
-          </View>
-        </View>
+        ))}
+
+        {/* Button to view more details */}
         <TouchableOpacity
           className="items-center bg-background w-[70%] py-3 rounded-xl"
           onPress={() => router.push("/discover")}
         >
-          <Text className="text-white font-outfitBold text-lg">view trip</Text>
+          <Text className="text-white font-outfitBold text-lg">View Trip</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

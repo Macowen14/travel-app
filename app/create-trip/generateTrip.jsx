@@ -6,7 +6,6 @@ import { auth, db } from "../../configs/firebase";
 import { doc, setDoc, arrayUnion } from "firebase/firestore"; // Import Firestore functions
 import { AI_PROMPT } from "../../constants/Options";
 import { CreateTripContext } from "../../context/CreateTripContext";
-import { dataResponse } from "../../constants/apiResponse";
 import { router } from "expo-router";
 
 const LoadingAnimation = () => {

@@ -12,7 +12,7 @@ import { auth } from "../configs/firebase";
 import { useRouter } from "expo-router";
 import { useContext } from "react";
 import { CreateTripContext } from "../context/CreateTripContext";
-const { setUserData, setTripData } = useContext(CreateTripContext); // Clear context
+
 // Hook to handle Google Sign-In
 export const useGoogleAuth = () => {
   // Configure Google Auth request
@@ -73,18 +73,19 @@ export const signInWithEmail = async (email, password) => {
   }
 };
 
-// Function to handle user sign out
 // Function to handle sign out
 export const handleSignOut = async () => {
+  const { setUserData, setTripData } = useContext(CreateTripContext); // Clear context
   const router = useRouter();
 
   try {
+    console.log("going to sign out");
     // Sign out the user
     await signOut(auth);
     console.log("User signed out successfully");
 
     // Clear the context after sign out
-    setUserData(null); // Clear user data
+    setUserData(""); // Clear user data
     setTripData([]); // Clear trip data
 
     // Redirect to the sign-in page

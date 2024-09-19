@@ -32,7 +32,7 @@ const ForgotPasswordPage = () => {
             placeholderTextColor="#6B7280"
             keyboardType="email-address"
           />
-          <TouchableOpacity className="bg-blue-600 py-4 rounded-lg shadow-md">
+          <TouchableOpacity className="bg-blue-600 4py- rounded-lg shadow-md">
             <Text className="text-white text-center text-lg font-bold">
               Send Reset Link
             </Text>

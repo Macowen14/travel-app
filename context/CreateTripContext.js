@@ -32,7 +32,7 @@ export const ContextProvider = ({ children }) => {
         console.log("UserSnap data:", userData);
 
         setUserData(userData);
-        setTripData(userData.trips || []); // Set trips if they exist, otherwise set an empty array
+        setTripData(userData.trips || []);
         console.log("Fetched user data from Firestore", userData);
         console.log("Trip data:", userData.trips || []);
       } else {
@@ -93,6 +93,7 @@ export const ContextProvider = ({ children }) => {
         updateTripData,
         loadUserData,
         userData,
+        setUserData,
         updateUserDetails,
         userId: auth.currentUser?.uid,
       }}

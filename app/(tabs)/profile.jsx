@@ -15,19 +15,26 @@ import * as ImagePicker from "expo-image-picker";
 import { CreateTripContext } from "../../context/CreateTripContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { handleSignOut } from "../../services/auth";
+import { signOut } from "firebase/auth";
+import { auth } from "../../configs/firebase";
 
 const Profile = () => {
   const router = useRouter();
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const { userData, updateUserDetails, setUserData } =
+  const { userData, updateUserDetails, setUserData, setTripData } =
     useContext(CreateTripContext);
-  const [updating, setUpdating] = useState(false);
+
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 9000); // 5 minutes
+
     if (userData) {
       setEmail(userData.email || "");
       setFullName(userData.fullName || "");
@@ -35,7 +42,11 @@ const Profile = () => {
       if (userData.avatar) {
         setSelectedAvatar(userData.avatar);
       }
+      clearTimeout(timer); // Clear timeout if userData is available
+      setLoading(false);
     }
+
+    return () => clearTimeout(timer); // Cleanup on unmount
   }, [userData]);
 
   const pickImage = async () => {
@@ -81,11 +92,52 @@ const Profile = () => {
     }
   };
 
-  if (!userData) {
+  const handleSignOut = async () => {
+    console.log("sign out function");
+
+    console.log("going to sign out");
+    // Sign out the user
+    await signOut(auth);
+    console.log("User signed out successfully");
+
+    // Clear the context after sign out
+    setUserData(""); // Clear user data
+    setTripData([]); // Clear trip data
+
+    // Redirect to the sign-in page
+    router.push("/(auth)/signin");
+
+    console.error("Error signing out:", error);
+  };
+
+  if (loading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading profile...</Text>
+        <Text className="mt-4 text-lg">Loading profile...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center">
+        <Text className="text-lg">
+          No user data found. Please try again later.
+        </Text>
+        <TouchableOpacity
+          className="mt-6 bg-red-600 py-2 px-4 rounded-lg flex-row items-center"
+          onPress={async () => {
+            try {
+              await handleSignOut(); // Await the sign-out function to handle promises
+            } catch (error) {
+              console.error("Error during sign-out:", error);
+            }
+          }}
+        >
+          <MaterialIcons name="delete-forever" size={24} color="white" />
+          <Text className="text-white font-bold ml-1">Signout</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -183,7 +235,11 @@ const Profile = () => {
             <TouchableOpacity
               className="mt-6 bg-red-600 py-2 px-4 rounded-lg flex-row items-center"
               onPress={async () => {
-                await handleSignOut(); // Correct invocation of the signout function
+                try {
+                  await handleSignOut(); // Await the sign-out function to handle promises
+                } catch (error) {
+                  console.error("Error during sign-out:", error);
+                }
               }}
               disabled={updating}
             >

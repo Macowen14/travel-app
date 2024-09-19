@@ -8,6 +8,7 @@ import {
   Image,
   ToastAndroid,
   SafeAreaView,
+  ActivityIndicator, // Import ActivityIndicator for loading spinner
 } from "react-native";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../../configs/firebase";
@@ -19,7 +20,7 @@ const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullname, setFullname] = useState("");
-  const [username, setUsername] = useState(""); // Add state for username
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
@@ -34,29 +35,27 @@ const SignupPage = () => {
     }
 
     try {
-      setLoading(true);
-      // Create user with email and password
+      setLoading(true); // Show loading indicator
       const res = await createUserWithEmailAndPassword(auth, email, password);
       const user = res.user;
-      // Save user data to Firestore with the correct displayName and fullName
       await setDoc(doc(db, "UsersTrips", user.uid), {
         id: user.uid,
         email,
         displayName: username,
         fullName: fullname,
-        avartar: "",
+        avatar: "",
         trips: [],
       });
       console.log("User info saved to Firestore");
-      setLoading(false);
-      route.push("/(tabs)/mytrips");
+      setLoading(false); // Hide loading indicator
+      router.push("/(tabs)/mytrip");
     } catch (error) {
       console.error("Error signing up:", error.code, error.message);
       ToastAndroid.show(
         "Error signing up. Please try again.",
         ToastAndroid.TOP
       );
-      setLoading(false);
+      setLoading(false); // Hide loading indicator
     }
   };
 
@@ -75,14 +74,16 @@ const SignupPage = () => {
           placeholder="Username"
           placeholderTextColor="#6B7280"
           value={username}
-          onChangeText={setUsername} // Directly updating the username state
+          onChangeText={setUsername}
+          editable={!loading} // Disable input while loading
         />
         <TextInput
           className="border border-gray-300 rounded-lg p-4 mb-4 text-gray-800 bg-gray-50"
           placeholder="Full Name"
           placeholderTextColor="#6B7280"
           value={fullname}
-          onChangeText={setFullname} // Directly updating the fullname state
+          onChangeText={setFullname}
+          editable={!loading} // Disable input while loading
         />
         <TextInput
           className="border border-gray-300 rounded-lg p-4 mb-4 text-gray-800 bg-gray-50"
@@ -90,7 +91,8 @@ const SignupPage = () => {
           placeholderTextColor="#6B7280"
           keyboardType="email-address"
           value={email}
-          onChangeText={setEmail} // Directly updating the email state
+          onChangeText={setEmail}
+          editable={!loading} // Disable input while loading
         />
         <TextInput
           className="border border-gray-300 rounded-lg p-4 mb-6 text-gray-800 bg-gray-50"
@@ -98,21 +100,29 @@ const SignupPage = () => {
           placeholderTextColor="#6B7280"
           secureTextEntry
           value={password}
-          onChangeText={setPassword} // Directly updating the password state
+          onChangeText={setPassword}
+          editable={!loading} // Disable input while loading
         />
         <TouchableOpacity
-          className="bg-blue-600 py-4 rounded-lg shadow-md"
-          onPress={handleSignUp} // Calling the handleSignUp function on press
-          disabled={loading}
+          className={`bg-blue-600 py-4 rounded-lg shadow-md ${
+            loading ? "opacity-50" : ""
+          }`}
+          onPress={handleSignUp}
+          disabled={loading} // Disable button during loading
         >
-          <Text className="text-white text-center text-lg font-bold">
-            Sign Up
-          </Text>
+          {loading ? (
+            <ActivityIndicator color="#ffffff" /> // Show loading spinner
+          ) : (
+            <Text className="text-white text-center text-lg font-bold">
+              Sign Up
+            </Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            route.back(); // Navigate back to the previous screen
+            route.back();
           }}
+          disabled={loading} // Disable button while loading
         >
           <Text className="text-gray-600 text-center mt-4">
             Already have an account?
