@@ -72,9 +72,9 @@ const UserTripList = () => {
           <>
             <View
               key={index}
-              className="mt-2 flex justify-between flex-row bg-gray-50 shadow-md rounded-md space-x-10 py-3 p-1"
+              className="mt-2 flex justify-between flex-row bg-gray-50 shadow-md rounded-md space-x-1 py-3 p-1"
             >
-              <View className="space-y-2">
+              <View className="space-y-2 mr-2">
                 <Text className="font-outfitMedium text-lg">
                   {trip?.travelPlan?.trip_details?.destination ||
                     "Unknown Destination"}
@@ -121,7 +121,7 @@ const UserTripList = () => {
                   })
                 }
               >
-                <Text className="text-white font-outfitBold text-lg">
+                <Text className="text-white font-outfitBold text-sm">
                   View Trip
                 </Text>
               </TouchableOpacity>

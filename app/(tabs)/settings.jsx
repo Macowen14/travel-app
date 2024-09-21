@@ -8,12 +8,14 @@ import {
   SafeAreaView,
   Modal,
   Pressable,
+  StatusBar,
 } from "react-native";
 import { useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { handleSignOut } from "../../services/auth";
 import { CreateTripContext } from "../../context/CreateTripContext";
+import { signOut } from "firebase/auth";
+import { auth } from "../../configs/firebase";
 
 const SettingsPage = () => {
   const [isThemeDark, setIsThemeDark] = useState(true);
@@ -32,14 +34,34 @@ const SettingsPage = () => {
     setIsThemeDark((prevTheme) => !prevTheme);
   };
 
-  const onSignOut = () => {
-    handleSignOut({ setUserData, setTripData });
+  const OnSignOut = async () => {
+    try {
+      console.log("Going to sign out...");
+
+      // Sign out the user
+      await signOut(auth);
+      console.log("User signed out successfully");
+
+      // Clear the context after sign out
+      setUserData(""); // Clear user data
+      setTripData([]); // Clear trip data
+
+      // Redirect to the sign-in page
+      router.replace("/(auth)/signin");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: isThemeDark ? "#1a1a1a" : "#fff" }}
+      style={{
+        flex: 1,
+        backgroundColor: isThemeDark ? "#1a1a1a" : "#fff",
+        paddingTop: 30,
+      }}
     >
+      <StatusBar barStyle={isThemeDark ? "light-content" : "dark-content"} />
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* Header */}
         <Text
@@ -180,7 +202,7 @@ const SettingsPage = () => {
             alignItems: "center",
             marginBottom: 24,
           }}
-          onPress={onSignOut}
+          onPress={OnSignOut}
         >
           <Ionicons
             name="log-out"

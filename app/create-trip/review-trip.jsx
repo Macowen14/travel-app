@@ -128,7 +128,9 @@ const ReviewTrip = () => {
             <FontAwesome name="calendar" size={24} color="teal" />
           </View>
           <View className="flex-col ml-3">
-            <Text className="font-semibold text-xl text-teal-600">Date</Text>
+            <Text className="font-semibold text-xl text-teal-600">
+              Start date
+            </Text>
             <Text className="text-gray-700 font-medium text-lg">
               {dateData?.date || "No date data"}
             </Text>
